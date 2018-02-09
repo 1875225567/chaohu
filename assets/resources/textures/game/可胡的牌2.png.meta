@@ -1,0 +1,30 @@
+{
+  "ver": "1.0.0",
+  "uuid": "00c65e34-4243-4ef7-ae43-c1cbdea6aaff",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "subMetas": {
+    "可胡的牌2": {
+      "ver": "1.0.3",
+      "uuid": "1a64f230-98a3-4893-a33d-b60f9af9f46a",
+      "rawTextureUuid": "00c65e34-4243-4ef7-ae43-c1cbdea6aaff",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 170,
+      "height": 167,
+      "rawWidth": 170,
+      "rawHeight": 167,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

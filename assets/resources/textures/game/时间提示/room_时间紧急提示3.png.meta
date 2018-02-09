@@ -1,0 +1,30 @@
+{
+  "ver": "1.0.0",
+  "uuid": "f66841f5-8983-4768-ad01-4a8dc05b4cbc",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "subMetas": {
+    "room_时间紧急提示3": {
+      "ver": "1.0.3",
+      "uuid": "29964d01-0a2a-48bb-a038-fffbe4aafa57",
+      "rawTextureUuid": "f66841f5-8983-4768-ad01-4a8dc05b4cbc",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": -41.5,
+      "offsetY": 1.5,
+      "trimX": 12,
+      "trimY": 12,
+      "width": 23,
+      "height": 103,
+      "rawWidth": 130,
+      "rawHeight": 130,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}
