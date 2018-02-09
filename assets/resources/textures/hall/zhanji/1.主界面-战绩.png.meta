@@ -1,0 +1,30 @@
+{
+  "ver": "1.0.0",
+  "uuid": "25d2566a-85af-4b44-a4e4-684660df1143",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "subMetas": {
+    "1.主界面-战绩": {
+      "ver": "1.0.3",
+      "uuid": "97dc7794-c6b2-4df8-b1c7-f43b65baf09f",
+      "rawTextureUuid": "25d2566a-85af-4b44-a4e4-684660df1143",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 1334,
+      "height": 750,
+      "rawWidth": 1334,
+      "rawHeight": 750,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}
