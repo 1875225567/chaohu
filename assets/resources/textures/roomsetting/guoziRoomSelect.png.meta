@@ -1,0 +1,30 @@
+{
+  "ver": "1.0.0",
+  "uuid": "a17ae285-69be-4ae3-954d-3a99f9b2b089",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "subMetas": {
+    "guoziRoomSelect": {
+      "ver": "1.0.3",
+      "uuid": "075934d7-819f-488c-934b-ebc269c8ec1b",
+      "rawTextureUuid": "a17ae285-69be-4ae3-954d-3a99f9b2b089",
+      "trimType": "custom",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 1041,
+      "height": 409,
+      "rawWidth": 1041,
+      "rawHeight": 409,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}
