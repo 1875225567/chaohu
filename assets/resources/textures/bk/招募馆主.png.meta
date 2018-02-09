@@ -1,0 +1,30 @@
+{
+  "ver": "1.0.0",
+  "uuid": "edbbe728-282a-4fc8-8b51-2b4342d809bf",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "subMetas": {
+    "招募馆主": {
+      "ver": "1.0.3",
+      "uuid": "b3e9be4c-cdfb-4189-8f84-9c54e551d86c",
+      "rawTextureUuid": "edbbe728-282a-4fc8-8b51-2b4342d809bf",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 210,
+      "height": 51,
+      "rawWidth": 210,
+      "rawHeight": 51,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

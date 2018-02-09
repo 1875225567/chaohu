@@ -1,0 +1,30 @@
+{
+  "ver": "1.0.0",
+  "uuid": "45ed6632-3ac7-4cf2-91ba-10835aec2d7f",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "subMetas": {
+    "孔明灯": {
+      "ver": "1.0.3",
+      "uuid": "9a43c0cb-bfce-400e-ba50-53fc1d64093c",
+      "rawTextureUuid": "45ed6632-3ac7-4cf2-91ba-10835aec2d7f",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 145,
+      "height": 176,
+      "rawWidth": 145,
+      "rawHeight": 176,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}
