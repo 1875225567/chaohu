@@ -11,6 +11,8 @@ cc.Class({
         sign:0,
         ip:"",
         sex:0,
+        tel:null,
+        parentid:null,
         roomData:null,
 
         oldRoomId:null,
@@ -66,6 +68,8 @@ cc.Class({
                     self.roomData = ret.roomid;
                     self.sex = ret.sex;
                     self.ip = ret.ip;
+                    self.tel = ret.tel;
+                    self.parentid = ret.parentid;
                     cc.director.loadScene("hall");
                 }
             }

@@ -178,9 +178,9 @@ cc.Class({
                 //console.log("remove:" + url);
                 jsb.fileUtils.removeFile(url);
             }
-            if(jsb.fileUtils.isFileExist(url + ".wav")){
-                //console.log("remove:" + url + ".wav");
-                jsb.fileUtils.removeFile(url + ".wav");
+            if(jsb.fileUtils.isFileExist(url + ".mp3")){
+                //console.log("remove:" + url + ".mp3");
+                jsb.fileUtils.removeFile(url + ".mp3");
             }   
         }
     },

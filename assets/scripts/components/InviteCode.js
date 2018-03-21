@@ -10,6 +10,12 @@ cc.Class({
     onLoad: function () {
         this._btn_bind = this.node.getChildByName('bind');
         cc.vv.utils.addClickEvent(this._btn_bind,this.node,"InviteCode","onBtnClicked");
+        // if(cc.vv.userMgr.parentid !== null){
+        //     this._btn_bind.active = false;
+        //     this.node.getChildByName('EditBox').active = false;
+        //     this.node.getChildByName('sprite').active = false;
+        //     this.node.getChildByName('label').getComponent(cc.Label).string = "邀请码已绑定！";
+        // }
     },
 
     onEnable:function () {
@@ -28,6 +34,7 @@ cc.Class({
                     }
                     else{
                         cc.vv.alertLabel.showOneTime("绑定成功");
+                        this.refreshData();
                     }
                 };
                 
@@ -45,6 +52,27 @@ cc.Class({
             }
 
         }
+    },
+
+    refreshData:function(){
+        var self = this;
+        var onGet = function(ret){
+            if(ret.errcode !== 0){
+                console.log(ret.errmsg);
+            }
+            else{
+                if(ret.data.gems != null){
+                    cc.vv.userMgr.parentid = ret.data.parentid;
+                    cc.find("Canvas/top_left/headinfo/card/label").getComponent(cc.Label).string = ret.data.gems;
+                }
+            }
+        };
+        
+        var data = {
+            account:cc.vv.userMgr.account,
+            sign:cc.vv.userMgr.sign,
+        };
+        cc.vv.http.sendRequest("/get_user_data_at_present",data,onGet.bind(this));
     },
 
     closeInvite:function(){

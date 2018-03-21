@@ -50,7 +50,7 @@ cc.Class({
         }
         
         if(this._sprIcon && this._sprIcon.getComponent(cc.Button)){
-            cc.vv.utils.addClickEvent(this._sprIcon,this.node,"Seat","onIconClicked");    
+            cc.vv.utils.addClickEvent(this._sprIcon,this.node,"Seat","onIconClicked");
         }
         
         
@@ -181,15 +181,22 @@ cc.Class({
         }
 
         if(cc.vv.replayMgr.isReplay()){
-            cc.find('Canvas/GameInfo/jushu').active = false;
-            cc.find('Canvas/GameInfo/mjCount').active = false;
-            cc.find('Canvas/GameInfo/guozi').active = false;
-            var arr = ["right","up","left","myself"];
-            for(var i = 0, max = arr.length; i < max; i += 1){
-                var piao = cc.find("Canvas/game/" + arr[i] + "/seat/piao");
-                piao.active = false;
-                var di = cc.find("Canvas/game/" + arr[i] + "/seat/di");
-                di.active = false;
+            if(this.node.getChildByName("di").active){
+                this.node.getChildByName("piao").active = false;
+                this.node.getChildByName("di").active = false;
+            }
+            if(cc.find('Canvas/GameInfo/mjCount').active){
+                cc.find('Canvas/GameInfo/jushu').active = false;
+                cc.find('Canvas/GameInfo/mjCount').active = false;
+                cc.find('Canvas/GameInfo/guozi').active = false;
+                cc.find('Canvas/GameInfo/bg').active = false;
+                // var arr = ["right","up","left","myself"];
+                // for(var i = 0, max = arr.length; i < max; i += 1){
+                //     var piao = cc.find("Canvas/game/" + arr[i] + "/seat/piao");
+                //     piao.active = false;
+                //     var di = cc.find("Canvas/game/" + arr[i] + "/seat/di");
+                //     di.active = false;
+                // }
             }
         }
         this.refresh();    

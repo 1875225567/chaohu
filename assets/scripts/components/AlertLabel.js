@@ -28,7 +28,7 @@ cc.Class({
                 terget.active = false;
                 this._actioning = false;
             },this);
-            var action = cc.fadeOut(1.0);
+            var action = cc.fadeOut(2.0);
             var cq = cc.sequence(action,call);
             this._alert.runAction(cq);
         }

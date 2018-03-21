@@ -14,7 +14,7 @@ cc.Class({
         // ...
     },
 
-    addClickEvent:function(node,target,component,handler){
+    addClickEvent:function(node,target,component,handler){//点击事件监控
         console.log(component + ":" + handler);
         var eventHandler = new cc.Component.EventHandler();
         eventHandler.target = target;
@@ -25,7 +25,7 @@ cc.Class({
         clickEvents.push(eventHandler);
     },
     
-    addSlideEvent:function(node,target,component,handler){
+    addSlideEvent:function(node,target,component,handler){//滑动事件监控
         var eventHandler = new cc.Component.EventHandler();
         eventHandler.target = target;
         eventHandler.component = component;
@@ -47,7 +47,7 @@ cc.Class({
                                         "yaoqingma","gonggao","history","userinfo","alertLabel"];
                     for(var i = 0, max = node.childrenCount; i < max; i += 1){
                         var childName = node.children[i].name;
-                        var number = childNodeArr.indexOf(childName);
+                        var number = childNodeArr.indexOf(childName);//判断元素是否在数组内，返回-1则不在。
                         if(number !== -1){
                             var _child = node.children[i];
                             if(_child.active){

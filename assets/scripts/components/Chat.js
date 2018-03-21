@@ -58,16 +58,16 @@ cc.Class({
         }
 
         this._quickChatInfo = {};
-        this._quickChatInfo["item0"] = {index:0,content:"别催，慢点！",sound:"bie.wav"};
-        this._quickChatInfo["item1"] = {index:1,content:"这牌真好！",sound:"zhe.wav"};
-        this._quickChatInfo["item2"] = {index:2,content:"迟早都得输！",sound:"shu.wav"};
-        this._quickChatInfo["item3"] = {index:3,content:"快点出牌啊！",sound:"kuai.wav"};
-        this._quickChatInfo["item4"] = {index:4,content:"上对下自摸！",sound:"shang.wav"};
-        this._quickChatInfo["item5"] = {index:5,content:"开心娱乐交朋友！",sound:"kai.wav"};
-        this._quickChatInfo["item6"] = {index:6,content:"瞧你那开心的样！",sound:"qiao.wav"};
-        this._quickChatInfo["item7"] = {index:7,content:"可不可以加个微信？",sound:"jia.wav"};
-        this._quickChatInfo["item8"] = {index:8,content:"请叫我达文西！",sound:"jiao.wav"};
-        this._quickChatInfo["item9"] = {index:9,content:"赢钱请吃饭！",sound:"ying.wav"};
+        this._quickChatInfo["item0"] = {index:0,content:"别催，慢点！",sound:"bie.mp3"};
+        this._quickChatInfo["item1"] = {index:1,content:"这牌真好！",sound:"zhe.mp3"};
+        this._quickChatInfo["item2"] = {index:2,content:"迟早都得输！",sound:"shu.mp3"};
+        this._quickChatInfo["item3"] = {index:3,content:"快点出牌啊！",sound:"kuai.mp3"};
+        this._quickChatInfo["item4"] = {index:4,content:"上对下自摸！",sound:"shang.mp3"};
+        this._quickChatInfo["item5"] = {index:5,content:"开心娱乐交朋友！",sound:"kai.mp3"};
+        this._quickChatInfo["item6"] = {index:6,content:"瞧你那开心的样！",sound:"qiao.mp3"};
+        this._quickChatInfo["item7"] = {index:7,content:"可不可以加个微信？",sound:"jia.mp3"};
+        this._quickChatInfo["item8"] = {index:8,content:"请叫我达文西！",sound:"jiao.mp3"};
+        this._quickChatInfo["item9"] = {index:9,content:"赢钱请吃饭！",sound:"ying.mp3"};
 
         this._tabQuick.active = true;
         this._tabEmoji.active = false;

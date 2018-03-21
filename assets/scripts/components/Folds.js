@@ -35,7 +35,7 @@ cc.Class({
             var sideRoot = game.getChildByName(sideName);
             var folds = [];
             var foldRoot = sideRoot.getChildByName("folds");
-            for(var j = 0; j < foldRoot.children.length; ++j){
+            for(var j = 0; j < 14/* foldRoot.children.length */; ++j){
                 var n = foldRoot.children[j];
                 n.active = false;
                 var sprite = n.getComponent(cc.Sprite); 
@@ -117,8 +117,8 @@ cc.Class({
     setSpriteFrameByMJID:function(pre,sprite,mjid){
         sprite.spriteFrame = cc.vv.mahjongmgr.getSpriteFrameByMJID(pre,mjid);
         sprite.node.active = true;
-/*         console.log(sprite.node);
-        console.log(sprite.spriteFrame); */
+        // console.log(sprite.node);
+        // console.log(sprite.spriteFrame);
     },
 
     // called every frame, uncomment this function to activate update callback

@@ -100,7 +100,7 @@ cc.Class({
             self.initRoomHistoryList(data);
         });
     },
-    
+    //处理转换后端发来的时间
     dateFormat:function(time){
         var date = new Date(time);
         var datetime = "{0}-{1}-{2}{3}{4}:{5}:{6}";
@@ -118,7 +118,7 @@ cc.Class({
         datetime = datetime.format(year,month,day,"\n",h,m,s);
         return datetime;
     },
-    
+    //显示各房间战绩
     initRoomHistoryList:function(data){
         this._content.removeAllChildren();
         this._detailTitle.active = false;
@@ -151,10 +151,10 @@ cc.Class({
         this.shrinkContent(data.length);
         this._curRoomInfo = null;
     },
-    
+    //显示房间内各局战绩详情
     initGameHistoryList:function(roomInfo,data){
         data.sort(function(a,b){
-           return a.create_time < b.create_time; 
+           return a.create_time > b.create_time; 
         });
         this._content.removeAllChildren();
         this._itemTitle.active = false;
@@ -165,34 +165,28 @@ cc.Class({
             node.active = true;
             node.y = -87 - i * 140;
             this._content.height = -(node.y) + 140;
-            var idx = data.length - i - 1;
-            node.idx = idx;
-            var titleId = "" + (idx + 1);
-            for(var k = 0; k < data.length; ++k){
-                if(i === data[k].game_index){
-                    break;
-                }
-            }
-            node.getChildByName("xuhao").getChildByName("label").getComponent(cc.Label).string = data[k].game_index + 1;
+            var idx = data.length - i/*  - 1 */;
+            node.idx = idx/*  + 1 */;
+            var titleId = "" + (idx/*  + 1 */);
+            node.getChildByName("xuhao").getChildByName("label").getComponent(cc.Label).string = data[i].game_index;
             var datetime = this.dateFormat(data[i].create_time * 1000);
             node.getChildByName("time").getChildByName("label").getComponent(cc.Label).string = datetime;
-            
+
             var btnOp = node.getChildByName("btnOp");
             btnOp.idx = idx;
             this.addClickEvent(btnOp,this.node,"History","onBtnOpClicked");
-            
-            var result = JSON.parse(data[k].result);
+
+            var result = data[i].result;
             for(var j = 0; j < 4; ++j){
                 var s = roomInfo.seats[j];
                 var info = s.name;
-                //console.log(info);
                 if(info.length > 2){
-                    this._detailTitle.getChildByName("player" + (j+1)).getComponent(cc.Label).string = info.slice(0,2) + "...";
+                    this._detailTitle.getChildByName("player" + (j + 1)).getComponent(cc.Label).string = info.slice(0,2) + "...";
                 }
                 else{
-                    this._detailTitle.getChildByName("player" + (j+1)).getComponent(cc.Label).string = info;
+                    this._detailTitle.getChildByName("player" + (j + 1)).getComponent(cc.Label).string = info;
                 }
-                node.getChildByName("player" + (j+1)).getChildByName("label").getComponent(cc.Label).string = result[j];
+                node.getChildByName("player" + (j + 1)).getChildByName("label").getComponent(cc.Label).string = result[j];
             }
         }
         this.shrinkContent(data.length);

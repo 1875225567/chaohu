@@ -19,6 +19,24 @@ cc.Class({
 
     // use this for initialization
     onLoad: function () {
+        var quanOrGuo = cc.find("Canvas/CreateRoom1/game_list/chgz");
+        if(quanOrGuo){
+            var roomOption = JSON.parse(cc.sys.localStorage.getItem("roomOption"));
+            if(quanOrGuo.active){
+                var nodeData = roomOption.chgz;
+            }else{
+                var nodeData = roomOption.chqz;
+            }
+
+            for(var i = 0, max = nodeData.length; i < max; i += 1){
+                if(this.node.name === nodeData[i]){
+                    var _checked = this.node.getComponent("CheckBox");
+                    _checked.checked = true;
+                    console.log(this.node.name);
+                    break;
+                }
+            }
+        }
         this.refresh();
     },
     

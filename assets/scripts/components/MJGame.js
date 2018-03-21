@@ -22,6 +22,8 @@ cc.Class({
         _hupaiLists:[],
         _playEfxs:[],
         _opts:[],
+        _tingdata:null,//zyh
+        _alreadyTing:null,
 
         greenBg:cc.SpriteFrame,
         redBg:cc.SpriteFrame
@@ -68,6 +70,8 @@ cc.Class({
         cc.vv.audioMgr.playBGM("game.mp3");
         //cc.vv.utils.addEscEvent(this.node);
         cc.vv.utils.addClickEvent(cc.find('Canvas/btn_settings'),this.node,'MJGame','onBtnClicked');
+        this._tingdata = {};//zyh
+        this._alreadyTing = [];
     },
 
     onBtnClicked:function (event) {
@@ -166,7 +170,8 @@ cc.Class({
             var juNum = cc.vv.gameNetMgr.maxNumOfGames;
             // var daNum = cc.vv.gameNetMgr.numOfGames / 4;
             // daNum = Math.ceil(daNum);
-            var daNum = cc.vv.gameNetMgr.numOfGames
+            var daNum = cc.vv.gameNetMgr.numOfGames;
+            if(daNum < 1) daNum = 1;
             this._gamecount = cc.find('Canvas/GameInfo/jushu/num').getComponent(cc.Label);
             this._gamecount.string = daNum + "/" + juNum;
             cc.find('Canvas/GameInfo/guozi').active = false;
@@ -229,6 +234,7 @@ cc.Class({
             }
             node.opacity = 255;
             this._chupaidrag.active = false;
+            this.showAwaitHu(node.mjId);
             this._chupaidrag.getComponent(cc.Sprite).spriteFrame = node.getComponent(cc.Sprite).spriteFrame;
             this._chupaidrag.x = event.getLocationX() - cc.director.getVisibleSize().width / 2;
             this._chupaidrag.y = event.getLocationY() - cc.director.getVisibleSize().height / 2;
@@ -343,12 +349,23 @@ cc.Class({
             self.hideChupai();
             data = data.detail;
             var pai = data.pai;
+            var btn_ting = self.node.getChildByName("btn_ting");
+            if(btn_ting.active) btn_ting.active = false;
+            var awaitHu = self.node.getChildByName("awaitHu");
+            var close = awaitHu.getChildByName("close");
+            close.off("touchstart",self.closeTing);
+            awaitHu.active = false;
+            var arrowData = JSON.parse(cc.sys.localStorage.getItem("arrow"));
+            if(arrowData.ting) arrowData.ting = false;
+            cc.sys.localStorage.setItem("arrow",JSON.stringify(arrowData));
             var localIndex = cc.vv.gameNetMgr.getLocalIndex(data.seatIndex);
             if(localIndex == 0){
                 var index = 13;
                 var sprite = self._myMJArr[index];
                 self.setSpriteFrameByMJID("M_",sprite,pai,index);
-                sprite.node.mjId = pai;                
+                sprite.node.mjId = pai;
+                self.hintOperation();//zyh
+                self.inithint();//zyh                         
             }
             else if(cc.vv.replayMgr.isReplay()){
                 self.initMopai(data.seatIndex,pai);
@@ -434,6 +451,10 @@ cc.Class({
                     self.addSuffix(seatIndex,"hu");
                 }
             }
+            var awaitHu = self.node.getChildByName("awaitHu");
+            var btn_ting = self.node.getChildByName("btn_ting");
+            awaitHu.active = false;
+            btn_ting.active = false;
             //cc.vv.audioMgr.playSFX("nv/hu.mp3");
         });
         
@@ -446,7 +467,8 @@ cc.Class({
                 var juNum = cc.vv.gameNetMgr.maxNumOfGames;
                 // var daNum = cc.vv.gameNetMgr.numOfGames / 4;
                 // daNum = Math.ceil(daNum);
-                var daNum = cc.vv.gameNetMgr.numOfGames
+                var daNum = cc.vv.gameNetMgr.numOfGames;
+                if(daNum < 1) daNum = 1;
                 self._gamecount.string = daNum + "/" + juNum;
             }
         });
@@ -454,6 +476,9 @@ cc.Class({
         this.node.on('game_over',function(data){
             self.gameRoot.active = false;
             self.prepareRoot.active = true;
+            var arrowData = JSON.parse(cc.sys.localStorage.getItem("arrow"));
+            arrowData.ting = false;
+            cc.sys.localStorage.setItem("arrow",JSON.stringify(arrowData));
         });
         
         
@@ -526,6 +551,7 @@ cc.Class({
             console.log("huang_notify");
             // self.hideChupai();
             var seatData = data.detail;
+            console.log("晃：",seatData);
             self.showHuangPai(true,4);
         });
         
@@ -602,6 +628,7 @@ cc.Class({
                 child.getChildByName("btnPeng").active = false;
                 child.getChildByName("btnGang").active = false;
                 child.getChildByName("btnHu").active = false;
+                child.getChildByName("btnHuang").active = false;
             }
         }
     },
@@ -610,9 +637,16 @@ cc.Class({
         if(this._options.active){
             this.hideOptions();
         }
-        
         if(data && (data.hu || data.gang || data.peng || data.huang)){
+            var awaitHu = this.node.getChildByName("awaitHu");
+            if(awaitHu.active) awaitHu.active = false;
             this._options.active = true;
+            var btn_ting = this.node.getChildByName("btn_ting");
+            if(btn_ting.active) btn_ting.active = false;
+            var awaitHu = this.node.getChildByName("awaitHu");
+            var close = awaitHu.getChildByName("close");
+            close.off("touchstart",this.closeTing);
+            awaitHu.active = false;
             if(data.peng){
                 this.addOption("btnPeng",data.pai);
             }
@@ -630,6 +664,7 @@ cc.Class({
 
             if(data.hu){
                 this.addOption("btnHu",data.pai);
+                this.clearArrow();
             }
         }
     },
@@ -681,14 +716,21 @@ cc.Class({
                 cc.loader.loadRes('prefabs/laizi',function(err,prefab){
                     var laizi = cc.instantiate(prefab);
                     paiNode.addChild(laizi);
-                    console.log(pai + "已经添加赖子标志。");
+                    // console.log(pai + "已经添加赖子标志。");
                 });
             }
         }
         else{
             if(paiNode.getChildByName('laizi')){
-                //paiNode.removeChild(paiNode.getChildByName('laizi'));
-                paiNode.removeAllChildren();
+                // paiNode.removeChild(paiNode.getChildByName('laizi'));
+                for(var w = 0, max = paiNode.childrenCount; w < max; w += 1){
+                    var child = paiNode.children[w];
+                    if(child.name !== "arrow"){
+                        paiNode.removeChild(child);
+                        w -= 1;
+                    }
+                }
+                // paiNode.removeAllChildren();
             }
         }
     },
@@ -768,6 +810,8 @@ cc.Class({
 
         this.showMagicPai();
         this.showHuangPai(false,4);
+        this.clearArrow();
+        this.showBtnTing();
 
         //游戏类型
         // if(cc.vv.gameNetMgr.conf.type == 1){
@@ -784,28 +828,6 @@ cc.Class({
         if(cc.vv.gameNetMgr.gamestate == "" && cc.vv.replayMgr.isReplay() == false){
             return;
         }
-
-        // const randomIntegerInRange = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-        // var tingNumber = randomIntegerInRange(1,6);
-        // var tingArr = [];
-        // for(var i = 0; i < tingNumber; i += 1){
-        //     tingArr[i] = randomIntegerInRange(0,25);
-        // }
-        // console.log(tingArr);
-        // if(tingArr.length !== 0){
-        //     var btn_ting = this.node.getChildByName("btn_ting");
-        //     btn_ting.active = true;
-        //     var awaitHu = this.node.getChildByName("awaitHu");
-        //     awaitHu.active = true;
-        //     var holds = awaitHu.getChildByName("holds");
-        //     var bg = awaitHu.getChildByName("bg");
-        //     for(var j = 0; j < tingArr.length; j += 1){
-        //         var sprit = holds.children[j].getComponent(cc.Sprite);
-        //         this.setSpriteFrameByMJID("M_",sprit,tingArr[j]);
-        //     }
-        //     console.log(bg);
-        //     bg.width = (tingArr.length - 1) * 60 + 180;
-        // }
 
         this.gameRoot.active = true;
         this.prepareRoot.active = false;
@@ -852,9 +874,8 @@ cc.Class({
             console.log("not your turn." + cc.vv.gameNetMgr.turn);
             return;
         }
-        
         for(var i = 0; i < this._myMJArr.length; ++i){
-            if(event.target == this._myMJArr[i].node){
+            if(event.target === this._myMJArr[i].node){
                 //如果是再次点击，则出牌
                 if(event.target == this._selectedMJ){
                     this.shoot(this._selectedMJ.mjId); 
@@ -867,9 +888,132 @@ cc.Class({
                 }
                 event.target.y = 15;
                 this._selectedMJ = event.target;
+                var obj = this.showAwaitHu(event.target.mjId);
+                var awaitHu = this.node.getChildByName("awaitHu");
+                if(obj){
+                    var pos = event.target.position;
+                    awaitHu.setPosition(pos.x - 60,-135);
+                    var bg = awaitHu.getChildByName("bg");
+                    var size = cc.director.getWinSize().width / 2;
+                    if(Math.abs(awaitHu.x) + (bg.width) / 2 > size){
+                        if(awaitHu.x > 0){
+                            awaitHu.runAction(cc.moveBy(0, cc.p(20, 0)));
+                        }
+                        else{
+                            awaitHu.runAction(cc.moveBy(0, cc.p(-20, 0)));
+                        }
+                    }
+                }
+                awaitHu.active = obj;
                 return;
             }
         }
+    },
+
+    //把准备听的牌显示到awaitHu上
+    showAwaitHu:function(mj){
+        // var mj = event.target.mjId;
+        var ting = require('../ting/tingpai');
+        var tingarr = ting.checktingpai(cc.vv.gameNetMgr,mj);
+        if(tingarr.length > 0){
+            console.log("显示听的牌: ",tingarr);
+            var seats = cc.vv.gameNetMgr.seats;
+            var fold = [];
+            for(var x = 0, max = seats.length; x < max; x += 1){
+                var folds = seats[x].folds;
+                var pengs = [];
+                var angangs = [];
+                var diangangs = [];
+                var wangangs = [];
+                if(seats[x].pengs.length > 0){
+                    for(var y = 0, max1 = seats[x].pengs.length; y < max1; y += 1){
+                        pengs.push(seats[x].pengs[y],seats[x].pengs[y],seats[x].pengs[y]);
+                    }
+                }
+                fold = fold.concat(pengs);
+                if(seats[x].angangs.length > 0){
+                    for(var y = 0, max1 = seats[x].angangs.length; y < max1; y += 1){
+                        angangs.push(seats[x].angangs[y],seats[x].angangs[y],seats[x].angangs[y],seats[x].angangs[y]);
+                    }
+                }
+                fold = fold.concat(angangs);
+                if(seats[x].diangangs.length > 0){
+                    for(var y = 0, max1 = seats[x].diangangs.length; y < max1; y += 1){
+                        diangangs.push(seats[x].diangangs[y],seats[x].diangangs[y],seats[x].diangangs[y],seats[x].diangangs[y]);
+                    }
+                }
+                fold = fold.concat(diangangs);
+                if(seats[x].wangangs.length > 0){
+                    for(var y = 0, max1 = seats[x].wangangs.length; y < max1; y += 1){
+                        wangangs.push(seats[x].wangangs[y],seats[x].wangangs[y],seats[x].wangangs[y],seats[x].wangangs[y]);
+                    }
+                }
+                fold = fold.concat(wangangs);
+                fold = fold.concat(folds);
+                if(x === cc.vv.gameNetMgr.seatIndex){
+                    var holds = seats[x].holds;
+                    fold = fold.concat(holds);
+                }
+            }
+            var alreadyTing = [];
+            var awaitHu = this.node.getChildByName("awaitHu");
+            if(awaitHu.active) awaitHu.active = false;
+            var holds = awaitHu.getChildByName("holds");
+            var bg = awaitHu.getChildByName("bg");
+            for(var j = 0; j < holds.childrenCount; j += 1){
+                var count = 4;
+                var apiece = [];
+                if(tingarr[j] >= 0){
+                    var sprit = holds.children[j].getComponent(cc.Sprite);
+                    this.setSpriteFrameByMJID("M_",sprit,tingarr[j]);
+                    for(var x = 0, max = fold.length; x < max; x += 1){
+                        if(fold[x] === tingarr[j]){
+                            count -= 1;
+                        }
+                    }1
+                    if(holds.children[j].color !== new cc.Color(255,255,255)){
+                        holds.children[j].color = new cc.Color(255,255,255);
+                    }
+                    holds.children[j].getChildByName("number").active = false;
+                    holds.children[j].getChildByName("label").getComponent(cc.Label).string = "";
+                    if(count > 1){
+                        holds.children[j].getChildByName("number").active = true;
+                        holds.children[j].getChildByName("label").getComponent(cc.Label).string = count;
+                    }
+                    else if(count === 0){
+                        holds.children[j].color = new cc.Color(128,128,128);
+                    }
+                    apiece.push(tingarr[j],count);2
+                    alreadyTing.push(apiece);
+                }
+                else{
+                    holds.children[j].active = false;
+                }
+            }
+            if(this._alreadyTing !== alreadyTing){
+                this._alreadyTing = alreadyTing;
+                var arrowData = JSON.parse(cc.sys.localStorage.getItem("arrow"));
+                arrowData.data = alreadyTing;
+                cc.sys.localStorage.setItem("arrow",JSON.stringify(arrowData));
+                console.log("正在听的牌。。。",alreadyTing);
+            }
+            bg.width = (tingarr.length - 1) * 61.5 + 110;
+            // awaitHu.active = true;
+            return true;
+        }
+        else{
+            // awaitHu.active = false;
+            return false;
+        }
+    },
+
+    //显示自己听的牌
+    showTing:function(){
+        var awaitHu = this.node.getChildByName("awaitHu");
+        var bg = awaitHu.getChildByName("bg");
+        var posX = 599 - (bg.width) / 2 - 30;
+        awaitHu.setPosition(posX,-85);
+        awaitHu.active = true;
     },
     
     //出牌
@@ -880,6 +1024,20 @@ cc.Class({
         }
         cc.vv.net.send('chupai',mjId);
         console.log("已出牌：" + mjId);
+        var tingarr = this._tingdata[mjId];
+        var btn_ting = this.node.getChildByName("btn_ting");
+        if(btn_ting.active) btn_ting.active = false;
+        if(tingarr && tingarr.length > 0){
+            var awaitHu = this.node.getChildByName("awaitHu");
+            btn_ting.active = true;
+            var close = awaitHu.getChildByName("close");
+            close.on("touchstart",this.closeTing);
+            var arrowData = JSON.parse(cc.sys.localStorage.getItem("arrow"));
+            arrowData.ting = true;
+            awaitHu.active = false;
+            cc.sys.localStorage.setItem("arrow",JSON.stringify(arrowData));
+        }
+        this.inithint_close();//zyh
     },
     
     getMJIndex:function(side,index){
@@ -899,11 +1057,14 @@ cc.Class({
         if(side !== "myself" && cc.vv.replayMgr.isReplay()){
             var holds = sideChild.getChildByName("fakeHolds");
             var holds1 = sideChild.getChildByName("holds");
-            holds1.active = false;
+            // holds1.active = false;
         }
         else{
             var holds = sideChild.getChildByName("holds");
             var holds1 = sideChild.getChildByName("fakeHolds");
+            // holds1.active = false;
+        }
+        if(holds1){
             holds1.active = false;
         }
 
@@ -1031,7 +1192,7 @@ cc.Class({
         //如果手上的牌的数目是2,5,8,11,14，表示最后一张牌是刚摸到的牌
         var mopai = null;
         var l = holds.length 
-        if( l == 2 || l == 5 || l == 8 || l == 11 || l == 14){
+        if( l === 2 || l === 5 || l === 8 || l === 11 || l === 14){
             mopai = holds.pop();
         }
 
@@ -1067,8 +1228,9 @@ cc.Class({
         console.log('初始手牌:', holds);
         
         //初始化手牌
-        console.log('wangangs:', seatData.wangangs);
-        var lackingNum = (seatData.pengs.length + seatData.angangs.length + seatData.diangangs.length + seatData.wangangs.length)*3;
+        // console.log('wangangs:', seatData.wangangs);
+        var lackingNum = (seatData.pengs.length + seatData.angangs.length + seatData.diangangs.length + seatData.wangangs.length) * 3;
+        //把赖子挪到牌组的最前边
         var num = holds.indexOf(cc.vv.gameNetMgr.magicpai);
         if(num !== -1 && cc.vv.gameNetMgr.conf.wanfa === 2){
             var num3 = holds.lastIndexOf(cc.vv.gameNetMgr.magicpai) - num + 1;
@@ -1077,6 +1239,7 @@ cc.Class({
                 holds.unshift(str[0]);
             }
         }
+        //显示牌
         for(var i = 0; i < holds.length; ++i){
             var mjid = holds[i];
             var sprite = this._myMJArr[i + lackingNum];
@@ -1084,12 +1247,14 @@ cc.Class({
             sprite.node.y = 0;
             this.setSpriteFrameByMJID("M_",sprite,mjid);
         }
+
         for(var i = 0; i < lackingNum; ++i){
             var sprite = this._myMJArr[i]; 
             sprite.node.mjId = null;
             sprite.spriteFrame = null;
             sprite.node.active = false;
         }
+
         for(var i = lackingNum + holds.length; i < this._myMJArr.length; ++i){
             var sprite = this._myMJArr[i]; 
             sprite.node.mjId = null;
@@ -1099,14 +1264,161 @@ cc.Class({
 
         var myMJArr = cc.find('Canvas/game/myself/holds');
         for (var i = 0; i < myMJArr.childrenCount; i++) {
-            myMJArr.children[i].x = -497 + i*75;
+            myMJArr.children[i].x = -497 + i * 75;
+            console.log("牌号码。", i,myMJArr.children[i].mjId);
         }
+
         var l = myMJArr.childrenCount;
-        if( l == 2 || l == 5 || l == 8 || l == 11 || l == 14){
-            myMJArr.children[l-1].x += 26;
+        if( l === 2 || l === 5 || l === 8 || l === 11 || l === 14){
+            myMJArr.children[l - 1].x += 26;
+            myMJArr.children[l - 1].y = 0;
+            if(!myMJArr.children[l - 1].active) myMJArr.children[l - 1].active = true;
+            console.log("摸牌啦。。", myMJArr.children[l - 1]);
+        }
+        this.hintOperation();//zyh
+        this.inithint();//zyh
+    },
+    hintOperation:function(){
+        var seats = cc.vv.gameNetMgr.seats;
+        var seatData = seats[cc.vv.gameNetMgr.seatIndex];
+        var holds = this.sortHolds(seatData);
+        if(holds == null){
+            return;
+        }
+        var lackingNum = (seatData.pengs.length + seatData.angangs.length + seatData.diangangs.length + seatData.wangangs.length)*3;
+        var num = holds.indexOf(cc.vv.gameNetMgr.magicpai);
+        if(num !== -1 && cc.vv.gameNetMgr.conf.wanfa === 2){
+            var num3 = holds.lastIndexOf(cc.vv.gameNetMgr.magicpai) - num + 1;
+            var str = holds.splice(num,num3);
+            for(var i = 0; i < num3;i += 1){
+                holds.unshift(str[0]);
+            }
+        }
+        this._tingdata={};
+        for(var i = 0; i < holds.length; ++i){
+            var mjid = holds[i];
+            var sprite = this._myMJArr[i + lackingNum];
+            sprite.node.mjId = mjid;
+            sprite.node.y = 0;
+            var ting = require('../ting/tingpai');
+            var tingarr = ting.checktingpai(cc.vv.gameNetMgr,mjid);
+            if(tingarr.length > 0){
+                this._tingdata[mjid] = tingarr;
+            }
+        }
+    },
+    inithint:function(){
+        var seats = cc.vv.gameNetMgr.seats;
+        var seatData = seats[cc.vv.gameNetMgr.seatIndex];
+        var holds = this.sortHolds(seatData);
+        if(holds == null){
+            return;
+        }
+        var lackingNum = (seatData.pengs.length + seatData.angangs.length + seatData.diangangs.length + seatData.wangangs.length)*3;
+        var num = holds.indexOf(cc.vv.gameNetMgr.magicpai);
+        if(num !== -1 && cc.vv.gameNetMgr.conf.wanfa === 2){
+            var num3 = holds.lastIndexOf(cc.vv.gameNetMgr.magicpai) - num + 1;
+            var str = holds.splice(num,num3);
+            for(var i = 0; i < num3;i += 1){
+                holds.unshift(str[0]);
+            }
+        }
+
+        var awaitHu = this.node.getChildByName("awaitHu");
+        var close = awaitHu.getChildByName("close");
+        var closeOff = true;
+        for(var i = 0; i < holds.length; ++i){
+            var mjid = holds[i];
+            var sprite = this._myMJArr[i + lackingNum];
+            sprite.node.mjId = mjid;
+            sprite.node.y = 0;
+            var tingarr = this._tingdata[mjid];
+            if(tingarr && tingarr.length > 0 && !cc.vv.replayMgr.isReplay()){
+                this.setArrowPosition(sprite.node,true);
+                if(closeOff){
+                    close.off("touchstart",this.closeTing);
+                    awaitHu.active = false;
+                    closeOff = false;
+                }
+            }
+        }
+    },
+
+     inithint_close:function(){
+        var seats = cc.vv.gameNetMgr.seats;
+        var seatData = seats[cc.vv.gameNetMgr.seatIndex];
+        var holds = this.sortHolds(seatData);
+        if(holds == null){
+            return;
+        }
+        var lackingNum = (seatData.pengs.length + seatData.angangs.length + seatData.diangangs.length + seatData.wangangs.length)*3;
+        var num = holds.indexOf(cc.vv.gameNetMgr.magicpai);
+        if(num !== -1 && cc.vv.gameNetMgr.conf.wanfa === 2){
+            var num3 = holds.lastIndexOf(cc.vv.gameNetMgr.magicpai) - num + 1;
+            var str = holds.splice(num,num3);
+            for(var i = 0; i < num3;i += 1){
+                holds.unshift(str[0]);
+            }
+        }
+  
+        for(var i = 0; i < holds.length; ++i){
+            var mjid = holds[i];
+            var sprite = this._myMJArr[i + lackingNum];
+            sprite.node.mjId = mjid;
+            sprite.node.y = 0;
+            this.setArrowPosition(sprite.node,false);
+        }
+    },
+
+
+    setArrowPosition:function(index,obj){
+        index.getChildByName("arrow").active = obj;
+    },
+
+    clearArrow:function(){
+        var myArrows = cc.find('Canvas/game/myself/holds');
+        for(var w = 0, max = myArrows.childrenCount; w < max; w += 1){
+            var arrow = myArrows.children[w];
+            arrow.getChildByName("arrow").active = false;
         }
     },
     
+    showBtnTing:function(){
+        var arrowData = JSON.parse(cc.sys.localStorage.getItem("arrow"));
+        if(arrowData.ting){
+            var tingarr = arrowData.data;
+            var awaitHu = this.node.getChildByName("awaitHu");
+            var holds = awaitHu.getChildByName("holds");
+            var bg = awaitHu.getChildByName("bg");
+            var btn_ting = this.node.getChildByName("btn_ting");
+            for(var j = 0; j < holds.childrenCount; j += 1){
+                if(tingarr[j] && tingarr[j][0] >= 0){
+                    var sprit = holds.children[j].getComponent(cc.Sprite);
+                    this.setSpriteFrameByMJID("M_",sprit,tingarr[j][0]);
+                    if(holds.children[j].color !== new cc.Color(255,255,255)){
+                        holds.children[j].color = new cc.Color(255,255,255);
+                    }
+                    holds.children[j].getChildByName("number").active = false;
+                    holds.children[j].getChildByName("label").getComponent(cc.Label).string = "";
+                    if(sprit,tingarr[j][1] > 1){
+                        holds.children[j].getChildByName("number").active = true;
+                        holds.children[j].getChildByName("label").getComponent(cc.Label).string = tingarr[j][1];
+                    }
+                    else if(sprit,tingarr[j][1] === 0){
+                        holds.children[j].color = new cc.Color(128,128,128);
+                    }
+                }
+                else{
+                    holds.children[j].active = false;
+                }
+            }
+            if(!btn_ting.active) btn_ting.active = true;
+            var close = awaitHu.getChildByName("close");
+            close.on("touchstart",this.closeTing);
+            bg.width = (tingarr.length - 1) * 61.5 + 110;
+        }
+    },
+
     setSpriteFrameByMJID:function(pre,sprite,mjid){
         sprite.spriteFrame = cc.vv.mahjongmgr.getSpriteFrameByMJID(pre,mjid);
         this.addMagicPai(sprite.node,mjid);
@@ -1118,12 +1430,12 @@ cc.Class({
         if(cc.vv.gameNetMgr.conf==null || cc.vv.gameNetMgr.conf.type != 1 || !cc.vv.gameNetMgr.getSelfData().hued){
             //遍历检查看是否有未打缺的牌 如果有，则需要将不是定缺的牌设置为不可用
             var dingque = cc.vv.gameNetMgr.dingque;
-    //        console.log(dingque)
+            // console.log(dingque)
             var hasQue = false;
             if(cc.vv.gameNetMgr.seatIndex == cc.vv.gameNetMgr.turn){
                 for(var i = 0; i < this._myMJArr.length; ++i){
                     var sprite = this._myMJArr[i];
-    //                console.log("sprite.node.mjId:" + sprite.node.mjId);
+                    // console.log("sprite.node.mjId:" + sprite.node.mjId);
                     if(sprite.node.mjId != null){
                         var type = cc.vv.mahjongmgr.getMahjongType(sprite.node.mjId);
                         if(type == dingque){
@@ -1134,7 +1446,7 @@ cc.Class({
                 }            
             }
 
-    //        console.log("hasQue:" + hasQue);
+            // console.log("hasQue:" + hasQue);
             for(var i = 0; i < this._myMJArr.length; ++i){
                 var sprite = this._myMJArr[i];
                 if(sprite.node.mjId != null){
@@ -1216,11 +1528,11 @@ cc.Class({
                 var str = "pu/nv/";
             }
             str += obj;
-            if(obj === "peng"){
+            if(obj === "peng" || obj === "zimo" || obj === "hu"){
                 str += ".mp3";
             }
             else{
-                str += ".wav";
+                str += ".mp3";
             }
         }
         else if(voice === "fang"){
@@ -1238,15 +1550,26 @@ cc.Class({
                     obj += ".mp3";
                 }
                 else{
-                    obj += ".wav";
+                    obj += ".mp3";
                 }
             }
+            else if(obj === "zimo" || obj === "hu"){
+                obj += ".mp3";
+            }
             else{
-                obj += ".wav";
+                obj += ".mp3";
             }
             str += obj;
         }
         cc.vv.audioMgr.playSFX(str);
+    },
+
+    closeTing:function(){
+        var btn_ting = cc.find('Canvas/btn_ting');
+        var awaitHu = cc.find('Canvas/awaitHu');
+        if(btn_ting.active){
+            awaitHu.active = false;
+        }
     },
     
     // called every frame, uncomment this function to activate update callback

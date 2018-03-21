@@ -15,6 +15,7 @@ cc.Class({
     onGameEnd:function(endinfo){
         this.node.active = true;
         var seats = endinfo.seats;
+        console.log(seats);
         for(var i = 0; i < seats.length; ++i){
             var seat = seats[i];
             var big = endinfo.big_winner;
@@ -44,7 +45,7 @@ cc.Class({
         seat.getChildByName("zimo").getChildByName("New Label").getComponent(cc.Label).string = seatdata.zimonum;
         seat.getChildByName("piaozi").getChildByName("New Label").getComponent(cc.Label).string = seatdata.piaozi;
         seat.getChildByName("difen").getChildByName("New Label").getComponent(cc.Label).string = seatdata.score;
-        seat.getChildByName("total score").getComponent(cc.Label).string = seatdata.score;
+        seat.getChildByName("total score").getComponent(cc.Label).string = seatdata.all;
         cc.vv.anysdkMgr.shareResult();
     },
 

@@ -28,7 +28,6 @@ cc.Class({
             cc.vv.radiogroupmgr = new RadioGroupMgr();
             cc.vv.radiogroupmgr.init();
         }
-        console.log(typeof(cc.vv.radiogroupmgr.add));
         cc.vv.radiogroupmgr.add(this);
         if(this.node.name === "putonghua"){
             var _checked = this.node.getComponent("RadioButton");
@@ -71,6 +70,25 @@ cc.Class({
             }
             else if(tableclothData.color === "red"){
                 _checked.checked = true;
+            }
+        }
+
+        var quanOrGuo = cc.find("Canvas/CreateRoom1/game_list/chgz");
+        if(quanOrGuo){
+            var roomOption = JSON.parse(cc.sys.localStorage.getItem("roomOption"));
+            console.log(roomOption);
+            if(quanOrGuo.active){
+                var nodeData = roomOption.chgz;
+            }else{
+                var nodeData = roomOption.chqz;
+            }
+
+            for(var i = 0, max = nodeData.length; i < max; i += 1){
+                if(this.node.name === nodeData[i]){
+                    var _checked = this.node.getComponent("RadioButton");
+                    _checked.checked = true;
+                    break;
+                }
             }
         }
         this.refresh();

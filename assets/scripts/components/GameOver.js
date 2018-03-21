@@ -190,6 +190,7 @@ cc.Class({
                     }
                     else if(info.action == "beiqianggang"){
                         str = "被抢杠 ";
+                        seatView.pao.active = true;
                     }
                     // else{
                     //     str = "被查大叫";
@@ -223,35 +224,44 @@ cc.Class({
                     }
                     else if(info.action == "dianganghua"){
                         if(userData.yadang){
-                            str += "自摸压当 点杠花 ";
+                            str += "自摸压当 杠后开花 ";
                         }
                         else{
-                            str += "自摸平胡 点杠花 ";
+                            str += "自摸平胡 杠后开花 ";
                         }
                     }
                     // else if(info.action == "gangpaohu"){
                     //     str = "杠炮胡";
                     // }
                     else if(info.action == "qiangganghu"){
-                        str = "抢杠胡 ";
+                        if(userData.yadang){
+                            str += "压当 抢杠胡 ";
+                        }
+                        else{
+                            str += "平胡 抢杠胡 ";
+                        }
+                        // str = "抢杠胡 ";
                     }
                     // else if(info.action == "chadajiao"){
                     //     str = "查大叫";
                     // }
-                    // if(info.action === "zimo"){
-                    //     var num = 2;
-                    // }
-                    // else{
-                    //     var num = 1;
-                    // }
-                    if(userData.holds.length > 1){
-                    for(var w = 0, max = userData.holds.length;w < max;w += 1){
-                        var pai = userData.holds[w];
-                        if(pai === this._hudepai){
-                            userData.holds.splice(w,1);
-                            break;
-                        }
+                    if(userData.huangwutong ){
+                        str += "晃五筒 ";
                     }
+                    if(info.action === "qiangganghu"){
+                        var num = 0;
+                    }
+                    else{
+                        var num = 1;
+                    }
+                    if(userData.holds.length > 1){
+                        for(var w = 0, max = userData.holds.length;w < max;w += 1){
+                            var pai = userData.holds[w];
+                            if(pai === this._hudepai){
+                                userData.holds.splice(w,num);
+                                break;
+                            }
+                        }
                     }
                     seatView.HU.active = true;
                     var spri = seatView.HU.getComponent(cc.Sprite);
@@ -275,10 +285,10 @@ cc.Class({
                 //     str += step + "杠胡";
                 //     step = "、";
                 // }
-                if(info.isQiangGangHu){
-                    str += step + "抢杠胡";
-                    step = " ";
-                }
+                // if(info.isQiangGangHu){
+                //     str += step + "抢杠胡";
+                //     step = " ";
+                // }
 
                 if(userData.huinfo[0].sifacai ){
                     str += step + "四张发财";
@@ -340,10 +350,10 @@ cc.Class({
                     str += step + "十幺";
                     step = " ";
                 }
-                if(userData.huinfo[0].huangwutong ){
-                    str += step + "晃五筒";
-                    step = " ";
-                }
+                // if(userData.huinfo[0].huangwutong ){
+                //     str += step + "晃五筒";
+                //     step = " ";
+                // }
                 if(userData.huinfo[0].duandui ){
                     str += step + "断对";
                     step = " ";

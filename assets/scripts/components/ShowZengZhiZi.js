@@ -19,7 +19,7 @@ cc.Class({
             }
         }
         
-        if(cc.vv.gameNetMgr.conf.type !== 1){
+        // if(cc.vv.gameNetMgr.conf.type !== 1){
             var gray = this._ZengZhiZi.getChildByName('gray');
             for(var i = 0, max = gray.childrenCount; i < max; i += 1){
                 var child = gray.children[i];
@@ -27,7 +27,7 @@ cc.Class({
                     child.active = true;
                 }
             }
-        }
+        // }
         //this.initEventHandlers();
     },
 

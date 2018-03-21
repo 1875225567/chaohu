@@ -111,9 +111,26 @@ cc.Class({
             };
             cc.sys.localStorage.setItem('tableclothData', JSON.stringify(tableclothData));
         }
+
         var voice = cc.sys.localStorage.getItem("voice");
-        if(!voice){
-            cc.sys.localStorage.setItem("voice","pu");
+        if(!voice) cc.sys.localStorage.setItem("voice","pu");
+
+        var arrow = JSON.parse(cc.sys.localStorage.getItem("arrow"));
+        if(!arrow){
+            var arrowData = {
+                data: [],
+                ting: false,
+            };
+            cc.sys.localStorage.setItem("arrow", JSON.stringify(arrowData));
+        }
+
+        var roomOption = JSON.parse(cc.sys.localStorage.getItem("roomOption"));
+        if(!roomOption){
+            var roomData = {
+                chgz: ["30","AA","5","wuyabukai","duandui","shiyizhi"],
+                chqz: ["2","AA","5","changguimoshi","facaidaikao","duanyao9","10yao","duandui","shiyizhi","zengzhizi","huangwutong"],
+            };
+            cc.sys.localStorage.setItem("roomOption", JSON.stringify(roomData));
         }
     },
     

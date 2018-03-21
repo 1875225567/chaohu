@@ -38,6 +38,7 @@ cc.Class({
     init:function(data){
         console.log(data);
         this._actionRecords = data.action_records;
+        // this._actionRecords = data.base_info.mahjongs;
         if(this._actionRecords == null){
             this._actionRecords = {};
         }

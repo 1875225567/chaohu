@@ -187,6 +187,60 @@ cc.Class({
     onBtnOK: function () {
         this.node.active = false;
         this.createRoom();
+        var roomOption = JSON.parse(cc.sys.localStorage.getItem("roomOption"));
+        var roomData = this.constructSCMJConf();
+        var option = [];
+        roomData.zhifu === 0 ? option.push("AA") : option.push("fangzhu");
+        if(roomData.facaidaikao === 1) option.push("facaidaikao");
+        if(roomData.duanyaojiu === 1) option.push("duanyao9");
+        if(roomData.shiyao === 1) option.push("10yao");
+        if(roomData.duandui === 1) option.push("duandui");
+        if(roomData.shiyizhi === 1) option.push("shiyizhi");
+        if(roomData.zengzhizi === 1) option.push("zengzhizi");
+
+        if(roomData.wanfa === 0){
+            option.push("changguimoshi");
+        }else if(roomData.wanfa === 1){
+            option.push("wuyabukai");
+        }else{
+            option.push("baidahu");
+        }
+
+        if(roomData.piaozifen === 0){
+            option.push("3");
+        }else if(roomData.piaozifen === 1){
+            option.push("5");
+        }else if(roomData.piaozifen === 2){
+            option.push("10");
+        }else{
+            option.push("20");
+        }
+
+        console.log(this.getType());
+        if(this.getType() === 0){
+            if(roomData.difen === 0){
+                option.push("30");
+            }else if(roomData.difen === 1){
+                option.push("50");
+            }else{
+                option.push("100");
+            }
+
+            roomOption.chgz = option;
+        }else{
+            if(roomData.jushuxuanze === 0){
+                option.push("2");
+            }else if(roomData.jushuxuanze === 1){
+                option.push("4");
+            }
+            
+            if(roomData.huangwutong === 1) option.push("huangwutong");
+            if(roomData.erjiatou === 1) option.push("erjiatou");
+
+            roomOption.chqz = option;
+        }
+        cc.sys.localStorage.setItem("roomOption", JSON.stringify(roomOption));
+        console.log(roomOption);
     },
 
     viewTips:function(){
@@ -249,7 +303,7 @@ cc.Class({
                 sign: cc.vv.userMgr.sign,
                 conf: JSON.stringify(conf)
             };
-            console.log(conf);
+            // console.log(conf);
             cc.vv.wc.show("正在创建房间");
             cc.vv.http.sendRequest("/create_private_room", data, onCreate);
         }
@@ -342,7 +396,7 @@ cc.Class({
         let huangwutong = this._Q_zidingyixuanze[6].checked ? 1 : 0;
         let erjiatou = this._Q_zidingyixuanze[7].checked ? 1 : 0;
 
-        if(this.getType() === 0){//'chgz'){
+        if(this.getType() === 0){//'chgz'
             var conf = {
                 type:0,//'chgz',//巢湖锅子:"chgz"，巢湖圈子:"chqz"
                 difen:difen,

@@ -21,7 +21,7 @@ cc.Class({
         gonggaoWin:cc.Node,
         jifenrenwuWin:cc.Node,
         bindphoneWin:cc.Node
-    },
+    },//20161227
     
     initNetHandlers:function(){
         var self = this;
@@ -29,6 +29,24 @@ cc.Class({
     
     onShareFriendliness:function(){
         cc.vv.anysdkMgr.share("巢州麻将","巢州麻将是一款休闲类棋牌游戏平台，时尚简约，是巢湖最具特色风格的本土文化休闲手游。经典不容错过。巢州麻将，有锅子，圈子型两种房间，包括增志子，晃五筒等8种可选玩法。",false);
+        var self = this;
+        var onGet = function(ret){
+            if(ret.errcode !== 0){
+                console.log(ret.errmsg);
+            }
+            else{
+                if(ret.data.coins != null && cc.vv.userMgr.coins !== ret.data.coins){
+                    cc.vv.userMgr.coins = ret.data.coins;
+                    self.lblMoney.string = ret.data.coins;
+                }
+            }
+        };
+        
+        var data = {
+            account:cc.vv.userMgr.account,
+            sign:cc.vv.userMgr.sign,
+        };
+        cc.vv.http.sendRequest("/get_user_data_at_present",data,onGet.bind(this));
     },
     onShareFriend:function(){
         cc.vv.anysdkMgr.share("巢州麻将","巢州麻将是一款休闲类棋牌游戏平台，时尚简约，是巢湖最具特色风格的本土文化休闲手游。经典不容错过。巢州麻将，有锅子，圈子型两种房间，包括增志子，晃五筒等8种可选玩法。",true);
@@ -58,7 +76,7 @@ cc.Class({
         this.btnJoinGame.active = true;
         
         //var params = cc.vv.args;
-        var roomId = cc.vv.userMgr.oldRoomId 
+        var roomId = cc.vv.userMgr.oldRoomId;
         if( roomId != null){
             cc.vv.userMgr.oldRoomId = null;
             cc.vv.userMgr.enterRoom(roomId);
@@ -128,7 +146,8 @@ cc.Class({
             }
             else{
                 if(ret.gems != null){
-                    this.lblGems.string = ret.gems;    
+                    this.lblGems.string = ret.gems;
+                    console.log(ret);
                 }
             }
         };
@@ -212,6 +231,12 @@ cc.Class({
         }
         else if(event.target.name === 'btn_yaoqingma'){
             this.yaoqingmaWin.active = true;
+            if(cc.vv.userMgr.parentid !== null){
+                this.yaoqingmaWin.getChildByName('bind').active = false;
+                this.yaoqingmaWin.getChildByName('EditBox').active = false;
+                this.yaoqingmaWin.getChildByName('sprite').active = false;
+                this.yaoqingmaWin.getChildByName('label').getComponent(cc.Label).string = "邀请码已绑定！";
+            }
         }
         else if(event.target.name === 'btn_shop'){
             //this.shopWin.active = true;
@@ -222,6 +247,12 @@ cc.Class({
         else if(event.target.name === 'btn_bindphone'){
             // cc.vv.alertLabel.showOneTime('功能未开放...');
             this.bindphoneWin.active = true;
+            if(cc.vv.userMgr.tel !== null){
+                this.bindphoneWin.getChildByName('bind').active = false;
+                this.bindphoneWin.getChildByName('EditBox').active = false;
+                this.bindphoneWin.getChildByName('sprite').active = false;
+                this.bindphoneWin.getChildByName('label').getComponent(cc.Label).string = "手机号已绑定！";
+            }
         }
         else if(event.target.name == "head"){
             cc.vv.userinfoShow.show(cc.vv.userMgr.userName,cc.vv.userMgr.userId,this.sprHeadImg,cc.vv.userMgr.sex,cc.vv.userMgr.ip);
@@ -352,41 +383,4 @@ cc.Class({
         };
         cc.vv.http.sendRequest("/get_message",data,onGet.bind(this));
     },
-
-    // yidalipao:function(){
-    //     var childNodeArr = ["JoinGame","rule","CreateRoom1","settings","share",
-    //                         "scoreTask","shop","zhaomuTips","Bill","bindphone",
-    //                         "yaoqingma","gonggao","history","userinfo","alertLabel"];
-    //     for(var i = 0, max = this.node.childrenCount; i < max; i += 1){
-    //         var childName = this.node.children[i].name;
-    //         var number = childNodeArr.indexOf(childName);
-    //         if(number !== -1){
-    //             var _child = this.node.children[i];
-    //             if(_child.active){
-    //                 if(childName === "history"){
-    //                     var history = this.node.getComponent("History");
-    //                     history.onBtnBackClicked();
-    //                 }
-    //                 else if(childName === "CreateRoom1"){
-    //                     var _child1 = this.node.children[i + 1];
-    //                     if(_child1.active){
-    //                         _child1.active = false;
-    //                     }
-    //                     else{
-    //                         _child.active = false;
-    //                     }
-    //                 }
-    //                 else{
-    //                     _child.active = false;
-    //                 }
-    //                 break;
-    //             }
-    //             else if(childName === "alertLabel" && !_child.active){
-    //                 cc.vv.alert.show('提示','确定要退出游戏吗？',function(){
-    //                     cc.game.end();
-    //                 },true);
-    //             }
-    //         }
-    //     }
-    // }
 });

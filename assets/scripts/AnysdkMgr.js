@@ -25,7 +25,7 @@ cc.Class({
     // },
     
     init:function(){
-        this.ANDROID_API = "com/miduo/qmkwx/WXAPI";
+        this.ANDROID_API = "com/miduo/chmj/WXAPI";
         this.IOS_API = "AppController";
     },
 
@@ -62,9 +62,11 @@ cc.Class({
     share:function(title,desc,shareType){
         if(cc.sys.os == cc.sys.OS_ANDROID){
             jsb.reflection.callStaticMethod(this.ANDROID_API, "Share", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)V",cc.vv.SI.appweb,title,desc,shareType);
+            this.onShareResp();
         }
         else if(cc.sys.os == cc.sys.OS_IOS){
             jsb.reflection.callStaticMethod(this.IOS_API, "share:shareTitle:shareDesc:",cc.vv.SI.appweb,title,desc);
+            this.onShareResp();
         }
         else{
             console.log("platform:" + cc.sys.os + " dosn't implement share.");

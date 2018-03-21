@@ -5,7 +5,7 @@ cc.Class({
         dataEventHandler:null,
         roomId:null,
         maxNumOfGames:0,
-        numOfGames:0,
+        numOfGames:1,
         numOfMJ:0,
         seatIndex:-1,
         seats:null,
@@ -59,7 +59,7 @@ cc.Class({
             this.seats = null;
             this.roomId = null;
             this.maxNumOfGames = 0;
-            this.numOfGames = 0;        
+            this.numOfGames = 1;        
         }
     },
     
@@ -432,7 +432,7 @@ cc.Class({
                 }
                 self.reset();
                 for(var i = 0; i <  self.seats.length; ++i){
-                    self.dispatchEvent('user_state_changed',self.seats[i]);    
+                    self.dispatchEvent('user_state_changed',self.seats[i]);
                 }
             }, 2000);
         });

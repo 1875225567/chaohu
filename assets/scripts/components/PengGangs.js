@@ -179,7 +179,7 @@ cc.Class({
                     sprite.spriteFrame = cc.vv.mahjongmgr.getSpriteFrameByMJID(pre,mjid);    
                 }
             }
-            else{ 
+            else{
                 sprite.spriteFrame = cc.vv.mahjongmgr.getSpriteFrameByMJID(pre,mjid);
             }
         }

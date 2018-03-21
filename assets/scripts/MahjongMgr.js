@@ -157,7 +157,7 @@ cc.Class({
             var rand1 = Math.floor(Math.random() * 2 + 1);
             realId += "_" + rand1;
         }
-        return str + realId + ".wav";
+        return str + realId + ".mp3";
         //return "nv/" + realId + ".mp3";
     },
 
