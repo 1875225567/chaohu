@@ -25,8 +25,6 @@ cc.Class({
         var btn_rule = this.node.getChildByName('btn_rule');
         cc.vv.utils.addClickEvent(btn_rule,this.node,'CreateRoom','onBtnClicked');
         this.ruleWindow.addComponent('OnBack');
-        
-        //cc.find("Canvas/CreateRoom1/tip").active = false;
 
         //锅子圈数
         this._leixingxuanze = [];
@@ -146,8 +144,11 @@ cc.Class({
                 this._Q_zidingyixuanze.push(n);
             }
         }
-        
-        this.roomCardShow();
+
+        var roomOption = JSON.parse(cc.sys.localStorage.getItem("roomOption"));
+        var tip = cc.find("Canvas/CreateRoom1/tip/Label").getComponent(cc.Label);
+        tip.string = roomOption.tip;
+        // this.roomCardShow();
     },
 
     numberOfGames:function(){
@@ -216,7 +217,6 @@ cc.Class({
             option.push("20");
         }
 
-        console.log(this.getType());
         if(this.getType() === 0){
             if(roomData.difen === 0){
                 option.push("30");
@@ -227,6 +227,8 @@ cc.Class({
             }
 
             roomOption.chgz = option;
+            var tip = cc.find("Canvas/CreateRoom1/tip/Label").getComponent(cc.Label);
+            roomOption.tip = tip.string;
         }else{
             if(roomData.jushuxuanze === 0){
                 option.push("2");
@@ -240,15 +242,6 @@ cc.Class({
             roomOption.chqz = option;
         }
         cc.sys.localStorage.setItem("roomOption", JSON.stringify(roomOption));
-        console.log(roomOption);
-    },
-
-    viewTips:function(){
-        //cc.find("Canvas/CreateRoom1/tip").active = true;
-    },
-
-    closeTips:function(){
-        //cc.find("Canvas/CreateRoom1/tip").active = false;
     },
 
     getType: function () {
@@ -290,10 +283,10 @@ cc.Class({
     
             var type = this.getType();
             var conf = null;
-            if (type == 0){//'chgz') {
+            if (type == 0){//'chgz'
                 conf = this.constructSCMJConf();
             }
-            else if (type == 1){//'chqz') {
+            else if (type == 1){//'chqz'
                 conf = this.constructSCMJConf();
             }
             conf.type = type;
@@ -478,8 +471,7 @@ cc.Class({
     },
 
     roomCardShow:function(){
-        var tip = cc.find("Canvas/CreateRoom1/tip/Label");
-        var edit = tip.getComponent(cc.Label);
+        var tip = cc.find("Canvas/CreateRoom1/tip/Label").getComponent(cc.Label);
         var _list = this.node.getChildByName("game_list");
         var guo = _list.getChildByName("chgz");
         var _num = [];
@@ -499,10 +491,10 @@ cc.Class({
         for(var i = 0, max1 = _jushu.length; i < max1; i += 1){
             if(_jushu[i].checked){
                 if(_zhifu[0].checked){
-                    edit.string = "扣除房卡 × " + _num[i];
+                    tip.string = "扣除房卡 × " + _num[i];
                 }
                 else{
-                    edit.string = "扣除房卡 × " + (_num[i] * 4);
+                    tip.string = "扣除房卡 × " + (_num[i] * 4);
                 }
             }
         }

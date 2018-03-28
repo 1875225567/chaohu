@@ -21,6 +21,7 @@ var Global = cc.Class({
                 if(event != "disconnect" && typeof(data) == "string"){
                     data = JSON.parse(data);
                 }
+                // console.log("net event name = " + event);
                 fn(data);
             };
             

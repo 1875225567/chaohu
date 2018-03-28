@@ -132,6 +132,27 @@ cc.Class({
         this.pushInfo();
         var createRoom = this.node.getChildByName("CreateRoom1").getComponent("CreateRoom");
         createRoom.numberOfGames();
+
+        cc.vv.gameNetMgr.dataEventHandler = this.node;
+        var self = this;
+        this.node.on('login_finished', function () {
+            // var load = self.node.getChildByName("loading");
+            // cc.loader.onProgress = (completedCount,totalCount,item) => {
+            //     var progress = (100 * completedCount / totalCount).toFixed();
+            //     load.active = true;
+            //     var yidalipao = load.getChildByName("yidalipao").getComponent(cc.Sprite);
+            //     var label = load.getChildByName("label").getComponent(cc.Label);
+            //     yidalipao.fillRange = progress / 100;
+            //     label.string = progress + "%";
+            // }
+            // cc.director.preloadScene("mjgame",() => {
+            //     cc.loader.onProgress = null;
+                cc.director.loadScene("mjgame",() => {
+                    cc.vv.net.ping();
+                    cc.vv.wc.hide();
+                });
+        //     });
+        });
     },
 
     moreGame:function(){
@@ -303,7 +324,7 @@ cc.Class({
     
     onReturnGameClicked:function(){
         cc.vv.wc.show('正在返回游戏房间');
-        cc.director.loadScene("mjgame");  
+        cc.director.loadScene("mjgame");
     },
     
     onBtnAddGemsClicked:function(){

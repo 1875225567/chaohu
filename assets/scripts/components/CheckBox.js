@@ -32,7 +32,6 @@ cc.Class({
                 if(this.node.name === nodeData[i]){
                     var _checked = this.node.getComponent("CheckBox");
                     _checked.checked = true;
-                    console.log(this.node.name);
                     break;
                 }
             }

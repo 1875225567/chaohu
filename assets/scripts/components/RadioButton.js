@@ -76,7 +76,6 @@ cc.Class({
         var quanOrGuo = cc.find("Canvas/CreateRoom1/game_list/chgz");
         if(quanOrGuo){
             var roomOption = JSON.parse(cc.sys.localStorage.getItem("roomOption"));
-            console.log(roomOption);
             if(quanOrGuo.active){
                 var nodeData = roomOption.chgz;
             }else{

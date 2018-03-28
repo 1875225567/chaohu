@@ -230,9 +230,15 @@ cc.Class({
                             str += "自摸平胡 杠后开花 ";
                         }
                     }
-                    // else if(info.action == "gangpaohu"){
-                    //     str = "杠炮胡";
-                    // }
+                    else if(info.action == "gangpaohu"){
+                        if(userData.yadang){
+                            str += "压当 ";
+                        }
+                        else{
+                            str += "平胡 ";
+                        }
+                        // str = "杠炮胡";
+                    }
                     else if(info.action == "qiangganghu"){
                         if(userData.yadang){
                             str += "压当 抢杠胡 ";

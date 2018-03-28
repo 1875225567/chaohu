@@ -39,7 +39,7 @@ cc.Class({
             cc.director.loadScene("loading");
             return;
         }
-
+        cc.vv.MJGame = this; 
         cc.log("in inload");
 
         //this.addComponent("NoticeTip");
@@ -788,13 +788,14 @@ cc.Class({
         var gameChild = this.node.getChildByName("game");
         for(var i = 0; i < sides.length; ++i){
             var sideChild = gameChild.getChildByName(sides[i]);
+            let holds = null;
             if(cc.vv.replayMgr.isReplay()){
-                var holds = sideChild.getChildByName("fakeHolds");
+                holds = sideChild.getChildByName("fakeHolds");
                 var holds1 = sideChild.getChildByName("holds");
                 holds1.active = false;
             }
             else{
-                var holds = sideChild.getChildByName("holds");
+                holds = sideChild.getChildByName("holds");
                 var holds1 = sideChild.getChildByName("fakeHolds");
                 holds1.active = false;
             }
@@ -846,6 +847,7 @@ cc.Class({
             var seatData = seats[i];
             var localIndex = cc.vv.gameNetMgr.getLocalIndex(i);
             if(localIndex != 0){
+                // console.log("Begin initMopai seatIndex = " + i.seatIndex);
                 this.initOtherMahjongs(seatData);
                 if(parseInt(i) == cc.vv.gameNetMgr.turn){
                     this.initMopai(i,-1);
@@ -1048,6 +1050,11 @@ cc.Class({
     },
     
     initMopai:function(seatIndex,pai){
+        if(seatIndex == -1 || seatIndex == null || !seatIndex)
+        {
+            return;
+        }
+        
         var localIndex = cc.vv.gameNetMgr.getLocalIndex(seatIndex);
         var side = cc.vv.mahjongmgr.getSide(localIndex);
         var pre = cc.vv.mahjongmgr.getFoldPre(localIndex);
@@ -1226,7 +1233,7 @@ cc.Class({
             return;
         }
         console.log('初始手牌:', holds);
-        
+
         //初始化手牌
         // console.log('wangangs:', seatData.wangangs);
         var lackingNum = (seatData.pengs.length + seatData.angangs.length + seatData.diangangs.length + seatData.wangangs.length) * 3;
@@ -1246,6 +1253,7 @@ cc.Class({
             sprite.node.mjId = mjid;
             sprite.node.y = 0;
             this.setSpriteFrameByMJID("M_",sprite,mjid);
+            // console.log("initMahjongs holds i = ", i);
         }
 
         for(var i = 0; i < lackingNum; ++i){
@@ -1255,26 +1263,34 @@ cc.Class({
             sprite.node.active = false;
         }
 
-        for(var i = lackingNum + holds.length; i < this._myMJArr.length; ++i){
-            var sprite = this._myMJArr[i]; 
-            sprite.node.mjId = null;
-            sprite.spriteFrame = null;
+        if(holds.length + lackingNum == 13)
+        {
+            // console.log("initMahjongs myMJArr.active = false");
+            var sprite = this._myMJArr[13];
             sprite.node.active = false;
+            sprite.spriteFrame = null;
+            sprite.node.mjId = null;
         }
 
-        var myMJArr = cc.find('Canvas/game/myself/holds');
-        for (var i = 0; i < myMJArr.childrenCount; i++) {
-            myMJArr.children[i].x = -497 + i * 75;
-            console.log("牌号码。", i,myMJArr.children[i].mjId);
-        }
+        //for(var i = lackingNum + holds.length; i < this._myMJArr.length; ++i){
+        //    var sprite = this._myMJArr[i]; 
+        //    sprite.node.mjId = null;
+        //    sprite.spriteFrame = null;
+        //    sprite.node.active = false;
+        //}
 
-        var l = myMJArr.childrenCount;
-        if( l === 2 || l === 5 || l === 8 || l === 11 || l === 14){
-            myMJArr.children[l - 1].x += 26;
-            myMJArr.children[l - 1].y = 0;
-            if(!myMJArr.children[l - 1].active) myMJArr.children[l - 1].active = true;
-            console.log("摸牌啦。。", myMJArr.children[l - 1]);
-        }
+        //var myMJArr = cc.find('Canvas/game/myself/holds');
+        //for (var i = 0; i < myMJArr.childrenCount; i++) {
+        //    myMJArr.children[i].x = -497 + i * 75;
+        //    // console.log("牌号码。", i, myMJArr.children[i].mjId);
+        //}
+
+        //var l = myMJArr.childrenCount;
+        //if( l === 2 || l === 5 || l === 8 || l === 11 || l === 14){
+        //    myMJArr.children[l - 1].x += 26;
+        //    if(!myMJArr.children[l - 1].active) myMJArr.children[l - 1].active = true;
+        //    console.log("摸牌啦。。", myMJArr.children[l - 1]);
+        //}
         this.hintOperation();//zyh
         this.inithint();//zyh
     },
@@ -1285,15 +1301,7 @@ cc.Class({
         if(holds == null){
             return;
         }
-        var lackingNum = (seatData.pengs.length + seatData.angangs.length + seatData.diangangs.length + seatData.wangangs.length)*3;
-        var num = holds.indexOf(cc.vv.gameNetMgr.magicpai);
-        if(num !== -1 && cc.vv.gameNetMgr.conf.wanfa === 2){
-            var num3 = holds.lastIndexOf(cc.vv.gameNetMgr.magicpai) - num + 1;
-            var str = holds.splice(num,num3);
-            for(var i = 0; i < num3;i += 1){
-                holds.unshift(str[0]);
-            }
-        }
+        var lackingNum = (seatData.pengs.length + seatData.angangs.length + seatData.diangangs.length + seatData.wangangs.length) * 3;
         this._tingdata={};
         for(var i = 0; i < holds.length; ++i){
             var mjid = holds[i];
@@ -1315,14 +1323,6 @@ cc.Class({
             return;
         }
         var lackingNum = (seatData.pengs.length + seatData.angangs.length + seatData.diangangs.length + seatData.wangangs.length)*3;
-        var num = holds.indexOf(cc.vv.gameNetMgr.magicpai);
-        if(num !== -1 && cc.vv.gameNetMgr.conf.wanfa === 2){
-            var num3 = holds.lastIndexOf(cc.vv.gameNetMgr.magicpai) - num + 1;
-            var str = holds.splice(num,num3);
-            for(var i = 0; i < num3;i += 1){
-                holds.unshift(str[0]);
-            }
-        }
 
         var awaitHu = this.node.getChildByName("awaitHu");
         var close = awaitHu.getChildByName("close");

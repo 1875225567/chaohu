@@ -124,11 +124,13 @@ cc.Class({
             cc.sys.localStorage.setItem("arrow", JSON.stringify(arrowData));
         }
 
+        // cc.sys.localStorage.removeItem("roomOption");
         var roomOption = JSON.parse(cc.sys.localStorage.getItem("roomOption"));
         if(!roomOption){
             var roomData = {
                 chgz: ["30","AA","5","wuyabukai","duandui","shiyizhi"],
                 chqz: ["2","AA","5","changguimoshi","facaidaikao","duanyao9","10yao","duandui","shiyizhi","zengzhizi","huangwutong"],
+                tip: "扣除房卡 × 1"
             };
             cc.sys.localStorage.setItem("roomOption", JSON.stringify(roomData));
         }

@@ -204,10 +204,6 @@ cc.Class({
                 
         cc.vv.net.addHandler("login_finished",function(data){
             console.log("login_finished");
-            cc.director.loadScene("mjgame",function(){
-                cc.vv.net.ping();
-                cc.vv.wc.hide();
-            });
             self.dispatchEvent("login_finished");
         });
 
@@ -324,7 +320,6 @@ cc.Class({
         });
          
         cc.vv.net.addHandler("game_begin_push",function(data){
-            console.log('game_action_push');
             console.log(data);
             self.button = data.button;
             self.turn = self.turn;
@@ -334,14 +329,12 @@ cc.Class({
         });
         
         cc.vv.net.addHandler("game_playing_push",function(data){
-            console.log('game_playing_push'); 
+            
             self.gamestate = "playing"; 
             self.dispatchEvent('game_playing');
         });
         
         cc.vv.net.addHandler("game_sync_push",function(data){
-            console.log("game_sync_push");
-            console.log(data);
             self.numOfMJ = data.numofmj;
             self.gamestate = data.state;
             self.magicpai = data.magicpai;
