@@ -32,7 +32,7 @@ cc.Class({
         if(userId != null && userId > 0){
             this._userinfo.active = true;
             this._userinfo.getChildByName("icon").getComponent(cc.Sprite).spriteFrame = iconSprite.spriteFrame;
-            if(cc.vv.userMgr.userName.length > 8){
+            if(name.length > 8){
                 this._userinfo.getChildByName("name").getComponent(cc.Label).string = name.slice(0,8) + "...";
             }
             else{

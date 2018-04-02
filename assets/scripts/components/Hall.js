@@ -229,12 +229,14 @@ cc.Class({
     },
 
     initLabels:function(){
-        if(cc.vv.userMgr.userName.length > 3){
-            this.lblName.string = cc.vv.userMgr.userName.slice(0,3) + "...";
-        }
-        else{
+        console.log("玩家昵称是:     ",cc.vv.userMgr.userName);
+        console.log("cc.vv是:     ",cc.vv.userMgr);
+        // if(cc.vv.userMgr.userName.length > 3){
+            // this.lblName.string = cc.vv.userMgr.userName.slice(0,3) + "...";
+        // }
+        // else{
             this.lblName.string = cc.vv.userMgr.userName;
-        }
+        // }
         this.lblMoney.string = cc.vv.userMgr.coins;
         this.lblGems.string = cc.vv.userMgr.gems;
         this.lblID.string = "ID:" + cc.vv.userMgr.userId;

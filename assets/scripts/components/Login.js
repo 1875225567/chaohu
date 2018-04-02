@@ -64,14 +64,14 @@ cc.Class({
         
         this._mima = ["A","A","B","B","A","B","A","B","A","A","A","B","B","B"];
         
-        if(!cc.sys.isNative || cc.sys.os == cc.sys.OS_WINDOWS){
-            cc.find("Canvas/btn_yk").active = true;
-            cc.find("Canvas/btn_weixin").active = false;
-        }
-        else{
-            cc.find("Canvas/btn_yk").active = false;
-            cc.find("Canvas/btn_weixin").active = true;
-        }
+        // if(!cc.sys.isNative || cc.sys.os == cc.sys.OS_WINDOWS){
+        //     cc.find("Canvas/btn_yk").active = true;
+        //     cc.find("Canvas/btn_weixin").active = false;
+        // }
+        // else{
+        //     cc.find("Canvas/btn_yk").active = false;
+        //     cc.find("Canvas/btn_weixin").active = true;
+        // }
     },
     
     start:function(){

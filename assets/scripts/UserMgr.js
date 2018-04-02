@@ -52,12 +52,13 @@ cc.Class({
                 console.log(ret.errmsg);
             }
             else{
-                if(!ret.userid && !cc.sys.isNative){
+                if(!ret.userid/*  && !cc.sys.isNative */){
                     //jump to register user info.
                     cc.director.loadScene("createrole");
                 }
                 else{
-                    console.log(ret);
+                    console.log("玩家昵称是:     ",self.userName);
+                    console.log("返回的数据是：   ",ret.name,ret.coins,ret.gems);
                     self.account = ret.account;
                     self.userId = ret.userid;
                     self.userName = ret.name;
@@ -71,6 +72,7 @@ cc.Class({
                     self.tel = ret.tel;
                     self.parentid = ret.parentid;
                     cc.director.loadScene("hall");
+                    console.log("玩家昵称是:     ",self.userName);
                 }
             }
         };
